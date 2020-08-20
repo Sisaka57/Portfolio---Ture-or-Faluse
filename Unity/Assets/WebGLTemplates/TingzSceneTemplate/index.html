@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scene Player</title>
+    <style>
+      body, html {
+        margin: 0px;
+        padding: 0px;
+      }
+      body {
+        font-family: "IBM Plex Sans", sans-serif;
+      }
+    </style>
+    <script src="%UNITY_WEBGL_LOADER_URL%"></script>
+    <script src="https://unpkg.com/tingz-sdk@latest/dist/index.umd.js"></script>
+    <script>
+      const tingz = new Tingz("true-or-false", {
+        apiEndpoint: "http://localhost:7778",
+        appOrigin: "http://localhost:7777",
+        isServer: true,
+      });
+
+      var gameInstance = UnityLoader.instantiate("gameContainer", "%UNITY_WEBGL_BUILD_URL%");
+
+      tingz.receive((data) => {
+        if(data.action == "GAME")
+          gameInstance.SendMessage("TingzBasic", "Response", data.payload.message);
+      });
+
+      tingz.send({
+        action: "LOADED",
+        payload: {
+          origin: "scene-player",
+        },
+      });
+    </script>
+  </head>
+  <body>
+    <div id="gameContainer" style="width: 100vw; height: 100vh; margin: auto"></div>
+  </body>
+</html>
